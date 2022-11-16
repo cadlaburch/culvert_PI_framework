@@ -1,0 +1,187 @@
+---
+title: "Linear_Score_Weight"
+author: "Catalina Burch"
+date: "4/18/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+#load libraries
+library(readxl)
+library(here)
+library(tidyverse)
+library(shades)
+library(patchwork)
+library(ragg)
+
+```
+
+## Linear Score Weight Analysis
+
+This is code to plot the weights of variables within the 5 linear PI's (Bellingham, Thurston, Chehalis, CWCC, King).
+The scoring weight was compiled from individual reports on the PI's within an excel document.
+
+```{r, include=FALSE}
+#load data
+Weight <- read_excel(here("output/Compare_Contrast Data/Linear Scoring Weight Analysis.xlsx"))
+#for some reason I had to include the whole path to get it to work even though I checked the working directory and it was in the right location.
+
+#create custom color palette for plot
+cbPalette <- c("#e41a1c",
+  "#377eb8",
+  "#4daf4a",
+  "grey40",
+  "#ff7f00",
+  "#a65628",
+  "#ffff33")
+
+pal <- c("#a6cee3",
+"#1f78b4",
+"#b2df8a",
+"#33a02c",
+"#fb9a99",
+"#e31a1c",
+"#fdbf6f")
+
+```
+
+## Bar Plot of the weight of different categories of variables used by each linear PI
+
+The seven categories of variables were qualitatively assigned to like variables within the overall metrics
+
+```{r, include=FALSE}
+WP <- Weight %>% 
+  filter(Jurisdiction!= "CWCCReport") %>% 
+ggplot(aes(fill=BroadCat, x=Jurisdiction, y=Weight*100))+
+  geom_bar(position="stack", stat="identity")+
+  theme_classic()+
+  theme(axis.ticks.y = element_blank(),
+        axis.text.x = element_text(angle = -20),
+        plot.title = element_text(face = "bold", hjust = 1))+
+  scale_fill_manual(values=saturation(pal, delta(-0.2)))+
+  scale_x_discrete(expand = c(0,0),
+                   limits=c("Chehalis","CWCC", "Bellingham", "Thurston", "King"))+
+  scale_y_continuous(expand = c(0,0))+
+  labs(y="% Scoring Weight", x=element_blank(), fill=element_blank(), title = "C.")
+WP
+
+#Flipped x and y axis version
+WPFlipped <- Weight %>% 
+  filter(Jurisdiction!= "CWCCReport") %>% 
+ggplot(aes(fill=BroadCat, y=Jurisdiction, x=Weight*100))+
+  geom_bar(position="stack", stat="identity")+
+  theme_classic()+
+  theme(axis.ticks = element_blank(),
+        plot.title = element_text(face = "bold", hjust = 1))+
+  scale_fill_manual(values=saturation(pal, delta(-0.2)))+
+  scale_y_discrete(expand = c(0,0),
+                   limits=c("Chehalis", "CWCC", "King", "Bellingham", "Thurston"))+
+  scale_x_continuous(expand = c(0,0))+
+  labs(x="% Scoring Weight", y=element_blank(), fill=element_blank(), title = "C.")
+
+ggsave("Weight.jpg", plot = WP, path = here("output/ScoreWeightFigs"), device = "jpg", width = 5, height = 3)
+
+
+```
+
+
+
+## Variable Comparison Across PI's
+I compared the variables across each PI to identify variables which were using the same metrics. This dataset can be found in the qualitative comparison table.
+
+For the first Iteration of this work I did the following:
+I processed this data to calculate the overall number of unique variables and the weight within each score of unique variables. Unique variables are metrics not shared by any of the other PI's within the case area. This processed data is what is being plotted. 
+
+I calculated this data for WFDW as well, but it is not currently plotted because WDFW is not a linear equation and variable weight is not easily comparable to the linear equations.
+
+We later realized that it would be better to inlude WDFW and use variable number instead of percent by weight
+
+```{r, include=FALSE}
+#load data
+Variable<- read_excel(here("output/Compare_Contrast Data/Variable Comparisons.xlsx"))
+
+#plot by variable weight
+Variable %>% 
+  ggplot(aes(fill=Type, x=J, y=ByWeight))+
+  geom_bar(position = "stack", stat = "identity")+
+  theme_classic()+
+  theme(axis.ticks = element_blank(),
+        legend.position = "none")+
+  scale_x_discrete(expand = c(0,0),
+                   limits=c("Chehalis","CWCC", "Bellingham", "Thurston", "King"))+
+  scale_fill_manual(values = c("grey45", "grey69"))+
+  scale_y_continuous(expand = c(0,0))+
+  labs(y="% Unique Variable Weight", x=element_blank(), fill=element_blank())->
+  V1P
+V1P
+
+#Plot by number of unique variables
+
+Variable %>% 
+  ggplot(aes(fill=Type2, x=Category, y=Score2))+
+  geom_bar(position = "stack", stat = "identity")+
+  theme_classic()+
+  theme(axis.ticks = element_blank())+
+  scale_x_discrete(expand = c(0,0),
+                   limits=c("H Potential", "Connectivity", "H Quantity",
+                            "Species", "Future", "Cost"))+
+  scale_fill_manual(values = c("grey45", "grey69"))+
+  scale_y_continuous(expand = c(0,0))+
+  labs(y="% Unique Variables", x=element_blank(), fill=element_blank())->
+  V2P
+
+V2P
+
+#This work below was done by Catalina on May 23
+#Plot by variable number
+AllPIVar <- Variable %>% 
+  ggplot(aes(y=reorder(J2, desc(percentshared)), x=percentshared))+
+  geom_bar(stat = "identity", na.rm = T)+
+  theme_classic()+
+  theme(axis.ticks = element_blank(),
+        legend.position = "none",
+        plot.title = element_text(face = "bold", hjust = 1))+
+  scale_y_discrete(expand = c(0,0),
+                   na.translate = F)+
+  scale_x_continuous(expand = c(0,0),
+                     limits = c(0, 101))+
+  labs(x="% Shared Metrics", y=element_blank(), title = "A.")
+AllPIVar
+
+AllCat <- Variable %>% 
+  ggplot(aes(y=reorder(category_2, desc(percent_shared)), x=percent_shared))+
+  geom_bar(stat = "identity", na.rm = T)+
+  theme_classic()+
+  theme(axis.ticks = element_blank(),
+        legend.position = "none",
+        plot.title = element_text(face = "bold", hjust = 1))+
+  scale_y_discrete(expand = c(0,0),
+                   na.translate = F)+
+  scale_x_continuous(expand = c(0,0),
+                     limits = c(0,101))+
+  labs(x="% Shared Metrics", y=element_blank(), title = "B.")
+
+AllCat
+
+VariableComparison <- (AllPIVar + AllCat + WPFlipped)
+VariableComparison
+
+ggsave("VariableComparison.tiff", plot = VariableComparison, path = here("output/VariableComparisonFigs"), device = agg_tiff, width = 10, height = 3)
+
+```
+#Final Plots
+I used patchwork to combine all of these plots into one final figure. Although we decided that displaying the figures separately was more effective.
+
+```{r, include=FALSE}
+#set desired layout
+#for some reason in markdown you have to select the whole chunk and run it otherwise it tries to read line by line
+layout<- 
+"AAAABBB
+CCCCC##"
+
+#create Final Plot
+AllPIVar + AllCat+WP+plot_layout(design=layout)
+```
+
