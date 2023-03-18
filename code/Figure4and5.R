@@ -146,7 +146,7 @@ Figure5
 
 #Save Plot
 ggsave(dpi = 300, units = "in", here("output/Figures","Figure5draft.tiff"), plot = Figure5, 
-       device = agg_tiff)
+       device = agg_tiff, width = 5, height = 5)
 
 #Final figure5 was made on illustrator
 

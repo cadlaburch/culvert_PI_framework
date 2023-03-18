@@ -1,9 +1,8 @@
 #Author: Catalina Burch
 #Date: June 9, 2022
 
-#Description
-#'I (Catalina) am working on the final report and we would like to include an overview
-#'map that shows which geographies we found PIs for within the case area.
+#Description:
+#'Overview map that shows which geographies we found PIs for within the case area.
 
 
 #-----------Load Libraries
