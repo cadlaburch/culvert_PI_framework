@@ -1,11 +1,12 @@
-# ra_salmon_culverts
-Repo for RA work relating to larger Salmon Culvert Project 
+#Culverts_PI Paper Repo
+
+Who prioritizes what? A cross jurisdictional comparative analysis of salmon fish passage strategies in Western Washington
 
 
 ##
 **Repository Structure**
 
-/code/: Markdown files and script to explore fish barrier culverts.
+/code/: Markdown files and script to explore fish barrier culverts. The scripts in /code/ transform the files in /data/ into the files in /output/.
 
 /data/: Raw data inputs. 
 
