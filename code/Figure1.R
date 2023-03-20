@@ -1,5 +1,3 @@
-#Author: Catalina Burch
-#Date: June 9, 2022
 
 #Description:
 #'Overview map that shows which geographies we found PIs for within the case area.
