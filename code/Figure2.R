@@ -24,16 +24,13 @@ King <- read_csv(here("data", "Feb22King.csv"))
 King %>% 
   filter(FishPassageFeatureTypeCode==1)->
   KingCulverts
-distinct(KingCulverts)
 
 #Filter for Barrier Culverts that received a PI Score
 KingSub <- King %>% 
   dplyr::select(AssetID, FishPassageBarrierStatusCode, FishPassageFeatureTypeCode, OverallScore) %>%
-  filter(FishPassageBarrierStatusCode==10, FishPassageFeatureTypeCode==1, OverallScore>=2)
+  filter(FishPassageBarrierStatusCode==10, FishPassageFeatureTypeCode==1, OverallScore>=0)
 
-distinct(KingSub) 
-
-#Summary Stats, n=107 
+length(unique(KingSub$AssetID)) # n=750 
 mean(KingSub$OverallScore) # 23.1
 median(KingSub$OverallScore) #18
 range(KingSub$OverallScore) #2, 95
@@ -69,8 +66,8 @@ P1 <- KingSub %>%
   geom_vline(xintercept=23.1, color = "red")+
   geom_vline(xintercept = 18, linetype = "dashed", color = "red")+
   ggtitle("King")+
-  annotate(geom = "text", y = 30, x = 80, label = "skew = 1.20", size=3.5) +
-  annotate(geom = "text", y = 40, x = 80, label = "n = 107", size=3.5)
+  annotate(geom = "text", y = 30, x = 80, label = "skew = 1.21", size=3.5) +
+  annotate(geom = "text", y = 40, x = 80, label = "n = 750", size=3.5)
 
 
 P1
@@ -143,6 +140,7 @@ sf_case_culverts = sf_case_culverts %>%
   filter(fish_passage_barrier_status_code != "non-barrier") 
 
 #Summary Stats
+length(unique(sf_case_culverts$site_id))
 mean(sf_case_culverts$priority_index_total_quantity, na.rm=TRUE) #answer 13.1
 median(sf_case_culverts$priority_index_total_quantity, na.rm=TRUE) #answer 11
 range(sf_case_culverts$priority_index_total_quantity, na.rm=TRUE) #answer 0, 82
@@ -154,13 +152,19 @@ quantile(sf_case_culverts$priority_index_total_quantity, na.rm=TRUE)
 #0.000  7.165 11.140 17.275 82.030 
 skewness(sf_case_culverts$priority_index_total_quantity, na.rm=TRUE) #1.63
 
-WDFW <- sf_case_culverts %>% 
-  ggplot(aes(x=priority_index_total_quantity, na.rm=TRUE))+
+#N Value: there are a lot of culverts without a PI score. This next chunk filters for culverts scored.
+wdfw_sub <- sf_case_culverts %>% 
+  select(site_id, priority_index_total_quantity) %>% 
+  na.omit()
+  
+
+WDFW <- wdfw_sub %>% 
+  ggplot(aes(x=priority_index_total_quantity*1.2191))+
   geom_rect(aes(xmin = 7.17, xmax = 17.28, ymin = 0, ymax = 300), fill = "pink1",alpha = 0.1)+
   geom_histogram(bins = 100) +
   geom_vline(xintercept=13.1, color = "red")+
   geom_vline(xintercept = 11, linetype = "dashed", color = "red")+
-  theme_classic()+
+  theme_classic() +
   theme(plot.title = element_text(size = 11),
         axis.title.x = element_blank(),
         axis.text.x = element_blank(),
@@ -380,7 +384,7 @@ P5
 -------------------------------------
 #Combine all of the plots
   #may not run with cmd enter, try selecting line and running
-histogram <- WDFW/P4/P2/P5/P1/P3
+histogram <- WDFW/P4/P1/P2/P5/P3
 
 #Output figure
 ggsave("Figure2.tiff", path = here("output/Figures"), plot=histogram, device=agg_tiff,

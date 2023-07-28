@@ -6,7 +6,7 @@ library(shades)
 library(patchwork)
 library(ragg)
 
--------------------------
+#-------------------------
 #Panel A & B
 #load data
 Variable <- read_excel(here("output/Compare_Contrast Data/Variable Comparisons.xlsx"))
@@ -42,19 +42,19 @@ AllCat <- Variable %>%
 
 AllCat
 
--------------------------
+#-------------------------
 #Panel C
 #load data
 Weight <- read_excel(here("output/Compare_Contrast Data/Linear Scoring Weight Analysis.xlsx"))
 
 #create custom color palette for plot
-pal <- c("#a6cee3",
-         "#1f78b4",
-         "#b2df8a",
-         "#33a02c",
-         "#fb9a99",
-         "#e31a1c",
-         "#fdbf6f")
+pal <- c("#AA4499",
+         "#CC6677",
+         "#DDCC77",
+         "#88CCEE",
+         "#44AA99",
+         "#117733",
+         "#332288")
 
 #Plot
 WPFlipped <- Weight %>% 
@@ -64,13 +64,13 @@ WPFlipped <- Weight %>%
   theme_classic()+
   theme(axis.ticks = element_blank(),
         plot.title = element_text(face = "bold", hjust = 1))+
-  scale_fill_manual(values=saturation(pal, delta(-0.2)))+
+  scale_fill_manual(values=pal)+
   scale_y_discrete(expand = c(0,0),
                    limits=c("Chehalis", "CWCC", "King", "Bellingham", "Thurston"))+
   scale_x_continuous(expand = c(0,0))+
   labs(x="% Scoring Weight", y=element_blank(), fill=element_blank(), title = "C.")
 
----------------
+#---------------
 #Combine and Export Plot
 Figure3 <- (AllPIVar + AllCat + WPFlipped)
 Figure3

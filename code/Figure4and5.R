@@ -25,18 +25,18 @@ Figure4 <- ggplot(data = Cost, aes(x = H, y = PI, color = Scenario))+
   theme_classic()+
   geom_hline(yintercept = 13)+
   geom_vline(xintercept = c(1586, 2380, 4760), linetype = "dashed")+
-  geom_segment(aes(x = 0, y = 0, xend = 4760, yend = 0), color = "#e41a1c")+
-  annotate(geom = "text", x = 4500, y = 1, label = "1", color = "#e41a1c")+
-  geom_segment(aes(x = 0, y = 1, xend = 2380, yend = 1), color = "#377eb8")+
-  annotate(geom = "text", x = 2100, y = 2, label = "1/2", color = "#377eb8")+
-  geom_segment(aes(x = 0, y = 2, xend = 1586, yend = 2), color = "#4daf4a")+
-  annotate(geom = "text", x = 1300, y = 3, label = "1/3", color = "#4daf4a")+
+  geom_segment(aes(x = 0, y = 0, xend = 4760, yend = 0), color = "#f03b20")+
+  annotate(geom = "text", x = 4500, y = 1, label = "1", color = "#f03b20")+
+  geom_segment(aes(x = 0, y = 1, xend = 2380, yend = 1), color = "#feb24c")+
+  annotate(geom = "text", x = 2100, y = 2, label = "1/2", color = "#feb24c")+
+  geom_segment(aes(x = 0, y = 2, xend = 1586, yend = 2), color = "#ffeda0")+
+  annotate(geom = "text", x = 1300, y = 3, label = "1/3", color = "#ffeda0")+
   scale_y_continuous(breaks = c(3, 9, 13, 17))+
   scale_x_continuous(breaks = c(1586, 2380, 4760),
                      expand = c(0,0))+
   labs(x = expression(Upstream~lineal~habitat~gain~m^2), y = "PI Score") +
   scale_color_manual(breaks = c("Low Cost", "Medium Cost", "High Cost"), 
-                     values = c("#4daf4a", "#377eb8", "#e41a1c")) 
+                     values = c("#ffeda0", "#feb24c", "#f03b20")) 
 
 Figure4
 
@@ -130,7 +130,7 @@ Figure5 <- SpeciesJoin %>%
   mutate(Species = fct_reorder(Species, desc(P))) %>% 
   ggplot(aes(x=H, y=PI, color=ESA))+
   geom_line(size=.8, aes(linetype = Scenario))+
-  scale_color_manual(values=c("#e41a1c", "#377eb8", "#4daf4a"),
+  scale_color_manual(values=c("#f03b20", "#feb24c", "#ffeda0"),
                      limits = c("Listed", "Species of concern", "Not listed"))+
   facet_wrap(~Species)+
   theme_classic()+
@@ -140,13 +140,13 @@ Figure5 <- SpeciesJoin %>%
   scale_x_continuous(expand = c(0,0),
                      breaks = c(1000, 3000, 5000))+
   scale_y_continuous(expand= c(0,0))+
-  labs(x = "Habitat Quanity (m)", y = "PI Score")
+  labs(x = "Habitat Quantity (m)", y = "PI Score")
 
 Figure5
 
 #Save Plot
 ggsave(dpi = 300, units = "in", here("output/Figures","Figure5draft.tiff"), plot = Figure5, 
-       device = agg_tiff, width = 5, height = 5)
+       device = agg_tiff, width = 7.2, height = 7)
 
 #Final figure5 was made on illustrator
 
