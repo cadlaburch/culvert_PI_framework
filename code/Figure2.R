@@ -1,5 +1,3 @@
-#Author: Catalina Burch
-#Date: November 16, 2022
 
 #Load Libraries
 library(tidyverse)
