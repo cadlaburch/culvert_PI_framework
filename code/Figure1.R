@@ -11,6 +11,11 @@ library(here)
 library(janitor)
 library(patchwork)
 library(readxl)
+library(ggplot2)
+library(rnaturalearth)
+library(mapproj)
+library(maps)
+library(rnaturalearthdata)
 
 #----------Inset Plot
 #'#Load Data
@@ -44,6 +49,33 @@ CaseAreaMapBW <- ggplot() +
 CaseAreaMapBW
 
 ggsave(plot = CaseAreaMapBW, path = here("output/Maps"), filename = "CaseArea.jpg", device = "jpg")
+
+# Load coastline data
+na_countries <- ne_countries(scale = 50, returnclass = "sf", continent = "North America")
+
+# Define a Lambert Conformal Conic projection
+crs_albers <- "+proj=utm +zone=10 +datum=WGS84"
+
+# Calculate the bounding box of the states
+bbox <- st_bbox(sf_case)
+
+# Create a rectangle for the bounding box
+bbox_rect <- st_as_sfc(bbox)
+
+# Plotting with Albers projection
+map_key <- ggplot() +
+  geom_sf(data = na_countries, color = "black") +
+  geom_sf(data = bbox_rect, fill = NA, color = "black", linewidth = .8) + # Add the bounding box
+  coord_sf(crs = crs_albers, expand = FALSE) +
+  theme_minimal() +
+  xlab("") +
+  ylab("") +
+  theme_void()
+
+# Display the plot
+map_key
+
+ggsave(here("output/Maps/inset_map.png"), plot = map_key, width = 5, height = 5, dpi = 300)
 
 
 #---------------Overview Map
